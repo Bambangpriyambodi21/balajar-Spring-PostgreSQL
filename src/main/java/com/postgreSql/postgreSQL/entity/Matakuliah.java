@@ -3,6 +3,8 @@ package com.postgreSql.postgreSQL.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,4 +18,10 @@ public class Matakuliah {
     private String id_matakuliah;
     private int sks;
     private String nama_matkul;
+    @ManyToOne
+    @JoinColumn(name = "id_dosen")
+    private Dosen dosen;
+//    @OneToMany(mappedBy = "mata_kuliah")
+//    private List<MatkulMahasiswa> matkulMahasiswaList;
+
 }
