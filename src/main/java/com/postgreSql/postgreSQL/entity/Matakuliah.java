@@ -18,9 +18,14 @@ public class Matakuliah {
     private String id_matakuliah;
     private int sks;
     private String nama_matkul;
+
     @ManyToOne
     @JoinColumn(name = "id_dosen")
     private Dosen dosen;
+
+    @OneToOne
+    @JoinColumn(name = "id_jadwal", referencedColumnName = "id_jadwal")
+    private Jadwal jadwal;
 //    @OneToMany(mappedBy = "mata_kuliah")
 //    private List<MatkulMahasiswa> matkulMahasiswaList;
 

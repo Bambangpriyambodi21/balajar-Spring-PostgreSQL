@@ -15,4 +15,5 @@ public class MatakuliahRequest {
     private int sks;
     private String nama_matkul;
     private Long dosen;
+    private Long jadwal;
 }
