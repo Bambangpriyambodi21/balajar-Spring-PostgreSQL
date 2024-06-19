@@ -91,48 +91,63 @@ public class MahasiswaServiceImpl implements MahasiswaService {
         Mahasiswa save1 = mahasiswaRepository.save(mahasiswa2);
 
         MahasiswaResponse conv = conv(save1);
-//        List<MatkulMahasiswaResponse> matkulMahasiswaResponses = new ArrayList<>();
-//        for (int i=0;i<matkulMahasiswaList.size();i++){
-//            Optional<MatkulMahasiswa> byId2 = matkulMahasiswaRepository.findById(save1.getMatkulMahasiswaList().get(i).getId());
-//            MatkulMahasiswa matkulMahasiswa = byId2.get();
-//
-//            MatkulMahasiswaResponse matkulMahasiswaResponse = MatkulMahasiswaResponse.builder()
-//                    .nama_matkul(matkulMahasiswa.getMatakuliah().getNama_matkul())
-//                    .dosen(matkulMahasiswa.getMatakuliah().getDosen().getNama())
-//                    .ruangan(matkulMahasiswa.getMatakuliah().getJadwal().getRuangan())
-//                    .sks(matkulMahasiswa.getMatakuliah().getSks())
-//                    .build();
-//            matkulMahasiswaResponses.add(matkulMahasiswaResponse);
-//        }
-//        MahasiswaResponse mahasiswaResponse = MahasiswaResponse.builder()
-//                .id(save1.getId())
-//                .nim(save1.getNim())
-//                .nama(save.getNama())
-//                .jenis_kelamin(save1.getJenis_kelamin())
-//                .jurusan(byId.get().getNama_jurusan())
-//                .id_matkul_mahasiswa(matkulMahasiswaResponses)
-//                .build();
         return conv;
     }
 
     @Override
-    public List<Mahasiswa> getAll() {
+    public List<MahasiswaResponse> getAll() {
         List<Mahasiswa> all = mahasiswaRepository.findAll();
-        return all;
+        List<MahasiswaResponse> mahasiswaResponses = new ArrayList<>();
+        for (int i=0;i<all.size();i++){
+            MahasiswaResponse conv = conv(all.get(i));
+            mahasiswaResponses.add(conv);
+        }
+        return mahasiswaResponses;
     }
 
     @Override
-    public Mahasiswa update(MahasiswaRequest mahasiswa) {
+    @Transactional(rollbackFor = Exception.class)
+    public MahasiswaResponse update(MahasiswaRequest mahasiswa) {
+        Optional<Mahasiswa> byId3 = mahasiswaRepository.findById(mahasiswa.getId());
+        for (int i=0;i<byId3.get().getMatkulMahasiswaList().size();i++) {
+            matkulMahasiswaRepository.deleteById(byId3.get().getMatkulMahasiswaList().get(i).getId());
+        }
+
         Optional<Jurusan> byId = jurusanRepository.findById(mahasiswa.getJurusan());
         Mahasiswa mahasiswa1 = Mahasiswa.builder()
                 .id(mahasiswa.getId())
-                .jenis_kelamin(mahasiswa.getJenis_kelamin())
-                .nama(mahasiswa.getNama())
                 .nim(mahasiswa.getNim())
+                .nama(mahasiswa.getNama())
+                .jenis_kelamin(mahasiswa.getJenis_kelamin())
                 .jurusan(byId.get())
                 .build();
         Mahasiswa save = mahasiswaRepository.save(mahasiswa1);
-        return save;
+
+        Optional<Mahasiswa> byId1 = mahasiswaRepository.findById(save.getId());
+
+        List<MatkulMahasiswa> matkulMahasiswaList= new ArrayList<>();
+        for (int i=0;i<mahasiswa.getId_matkul_mahasiswa().size();i++){
+            Optional<Matakuliah> byId2 = matakuliahRepository.findById(mahasiswa.getId_matkul_mahasiswa().get(i).getId_matkul());
+            MatkulMahasiswa matkulMahasiswa= MatkulMahasiswa.builder()
+                    .mahasiswa(byId1.get())
+                    .matakuliah(byId2.get())
+                    .build();
+            matkulMahasiswaRepository.save(matkulMahasiswa);
+            matkulMahasiswaList.add(matkulMahasiswa);
+        }
+
+        Mahasiswa mahasiswa2 = Mahasiswa.builder()
+                .id(save.getId())
+                .jurusan(save.getJurusan())
+                .nim(save.getNim())
+                .nama(save.getNama())
+                .jenis_kelamin(save.getJenis_kelamin())
+                .matkulMahasiswaList(matkulMahasiswaList)
+                .build();
+        Mahasiswa save1 = mahasiswaRepository.save(mahasiswa2);
+
+        MahasiswaResponse conv = conv(save1);
+        return conv;
     }
 
     @Override

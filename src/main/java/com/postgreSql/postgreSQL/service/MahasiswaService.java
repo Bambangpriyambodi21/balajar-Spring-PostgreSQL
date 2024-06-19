@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface MahasiswaService {
     MahasiswaResponse create(MahasiswaRequest mahasiswa);
-    List<Mahasiswa> getAll();
-    Mahasiswa update(MahasiswaRequest mahasiswa);
+    List<MahasiswaResponse> getAll();
+    MahasiswaResponse update(MahasiswaRequest mahasiswa);
     String delete(String id);
 }

@@ -24,13 +24,13 @@ public class MahasiswaController {
 
     @GetMapping
     public ResponseEntity<?> getAll(){
-        List<Mahasiswa> all = mahasiswaService.getAll();
+        List<MahasiswaResponse> all = mahasiswaService.getAll();
         return ResponseEntity.ok(all);
     }
 
     @PutMapping
     public ResponseEntity<?> update(@RequestBody MahasiswaRequest mahasiswa){
-        Mahasiswa update = mahasiswaService.update(mahasiswa);
+        MahasiswaResponse update = mahasiswaService.update(mahasiswa);
         return ResponseEntity.ok(update);
     }
 
