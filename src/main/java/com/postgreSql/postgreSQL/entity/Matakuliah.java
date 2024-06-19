@@ -26,7 +26,8 @@ public class Matakuliah {
     @OneToOne
     @JoinColumn(name = "id_jadwal", referencedColumnName = "id_jadwal")
     private Jadwal jadwal;
-//    @OneToMany(mappedBy = "mata_kuliah")
-//    private List<MatkulMahasiswa> matkulMahasiswaList;
+
+    @OneToMany(mappedBy = "matakuliah", cascade = CascadeType.PERSIST)
+    private List<MatkulMahasiswa> matkulMahasiswaList;
 
 }

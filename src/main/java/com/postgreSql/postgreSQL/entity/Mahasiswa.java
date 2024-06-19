@@ -19,9 +19,11 @@ public class Mahasiswa {
     private String nim;
     private String nama;
     private String jenis_kelamin;
+
     @ManyToOne
     @JoinColumn(name = "id_jurusan")
     private Jurusan jurusan;
-//    @OneToMany(mappedBy = "mahasiswa")
-//    private List<MatkulMahasiswa> matkulMahasiswaList;
+
+    @OneToMany(mappedBy = "mahasiswa", cascade = CascadeType.PERSIST)
+    private List<MatkulMahasiswa> matkulMahasiswaList;
 }

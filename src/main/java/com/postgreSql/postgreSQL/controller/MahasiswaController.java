@@ -2,6 +2,7 @@ package com.postgreSql.postgreSQL.controller;
 
 import com.postgreSql.postgreSQL.entity.Mahasiswa;
 import com.postgreSql.postgreSQL.model.request.MahasiswaRequest;
+import com.postgreSql.postgreSQL.model.response.MahasiswaResponse;
 import com.postgreSql.postgreSQL.service.MahasiswaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class MahasiswaController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody MahasiswaRequest mahasiswa){
-        Mahasiswa mahasiswa1 = mahasiswaService.create(mahasiswa);
+        MahasiswaResponse mahasiswa1 = mahasiswaService.create(mahasiswa);
         return ResponseEntity.ok(mahasiswa1);
     }
 
