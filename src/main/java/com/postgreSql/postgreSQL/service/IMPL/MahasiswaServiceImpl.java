@@ -30,6 +30,31 @@ public class MahasiswaServiceImpl implements MahasiswaService {
     private final MatakuliahRepository matakuliahRepository;
     private final MatkulMahasiswaRepository matkulMahasiswaRepository;
 
+    private MahasiswaResponse conv(Mahasiswa mahasiswa){
+        List<MatkulMahasiswaResponse> matkulMahasiswaResponses = new ArrayList<>();
+        for (int i=0;i<mahasiswa.getMatkulMahasiswaList().size();i++){
+            Optional<MatkulMahasiswa> byId2 = matkulMahasiswaRepository.findById(mahasiswa.getMatkulMahasiswaList().get(i).getId());
+            MatkulMahasiswa matkulMahasiswa = byId2.get();
+
+            MatkulMahasiswaResponse matkulMahasiswaResponse = MatkulMahasiswaResponse.builder()
+                    .nama_matkul(matkulMahasiswa.getMatakuliah().getNama_matkul())
+                    .dosen(matkulMahasiswa.getMatakuliah().getDosen().getNama())
+                    .ruangan(matkulMahasiswa.getMatakuliah().getJadwal().getRuangan())
+                    .sks(matkulMahasiswa.getMatakuliah().getSks())
+                    .build();
+            matkulMahasiswaResponses.add(matkulMahasiswaResponse);
+        }
+        MahasiswaResponse mahasiswaResponse = MahasiswaResponse.builder()
+                .id(mahasiswa.getId())
+                .nim(mahasiswa.getNim())
+                .nama(mahasiswa.getNama())
+                .jenis_kelamin(mahasiswa.getJenis_kelamin())
+                .jurusan(mahasiswa.getJurusan().getNama_jurusan())
+                .id_matkul_mahasiswa(matkulMahasiswaResponses)
+                .build();
+        return mahasiswaResponse;
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public MahasiswaResponse create(MahasiswaRequest mahasiswa) {
@@ -65,25 +90,29 @@ public class MahasiswaServiceImpl implements MahasiswaService {
                 .build();
         Mahasiswa save1 = mahasiswaRepository.save(mahasiswa2);
 
-        List<MatkulMahasiswaResponse> matkulMahasiswaResponses = new ArrayList<>();
-        for (int i=0;i<matkulMahasiswaList.size();i++){
-            Optional<MatkulMahasiswa> byId2 = matkulMahasiswaRepository.findById(save1.getMatkulMahasiswaList().get(i).getId());
-            MatkulMahasiswa matkulMahasiswa = byId2.get();
-
-            MatkulMahasiswaResponse matkulMahasiswaResponse = MatkulMahasiswaResponse.builder()
-                    .id_matkul(matkulMahasiswa.getMatakuliah().getNama_matkul())
-                    .build();
-            matkulMahasiswaResponses.add(matkulMahasiswaResponse);
-        }
-        MahasiswaResponse mahasiswaResponse = MahasiswaResponse.builder()
-                .id(save1.getId())
-                .nim(save1.getNim())
-                .nama(save.getNama())
-                .jenis_kelamin(save1.getJenis_kelamin())
-                .jurusan(byId.get().getNama_jurusan())
-                .id_matkul_mahasiswa(matkulMahasiswaResponses)
-                .build();
-        return mahasiswaResponse;
+        MahasiswaResponse conv = conv(save1);
+//        List<MatkulMahasiswaResponse> matkulMahasiswaResponses = new ArrayList<>();
+//        for (int i=0;i<matkulMahasiswaList.size();i++){
+//            Optional<MatkulMahasiswa> byId2 = matkulMahasiswaRepository.findById(save1.getMatkulMahasiswaList().get(i).getId());
+//            MatkulMahasiswa matkulMahasiswa = byId2.get();
+//
+//            MatkulMahasiswaResponse matkulMahasiswaResponse = MatkulMahasiswaResponse.builder()
+//                    .nama_matkul(matkulMahasiswa.getMatakuliah().getNama_matkul())
+//                    .dosen(matkulMahasiswa.getMatakuliah().getDosen().getNama())
+//                    .ruangan(matkulMahasiswa.getMatakuliah().getJadwal().getRuangan())
+//                    .sks(matkulMahasiswa.getMatakuliah().getSks())
+//                    .build();
+//            matkulMahasiswaResponses.add(matkulMahasiswaResponse);
+//        }
+//        MahasiswaResponse mahasiswaResponse = MahasiswaResponse.builder()
+//                .id(save1.getId())
+//                .nim(save1.getNim())
+//                .nama(save.getNama())
+//                .jenis_kelamin(save1.getJenis_kelamin())
+//                .jurusan(byId.get().getNama_jurusan())
+//                .id_matkul_mahasiswa(matkulMahasiswaResponses)
+//                .build();
+        return conv;
     }
 
     @Override

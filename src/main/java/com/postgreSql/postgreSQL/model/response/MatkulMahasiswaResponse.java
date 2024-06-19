@@ -9,4 +9,7 @@ import lombok.*;
 @Builder
 public class MatkulMahasiswaResponse {
     private String nama_matkul;
+    private int sks;
+    private String dosen;
+    private String ruangan;
 }
